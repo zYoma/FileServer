@@ -1,0 +1,42 @@
+version: "3.7"
+
+volumes:
+  db:
+
+services:
+  app:
+    build:
+      context: .
+    command: bash -c "sleep 10 && alembic upgrade head && uvicorn --host 0.0.0.0 main:app"
+    ports:
+      - "${DOCKER_APP_PORT:-8000}:8000"
+    env_file: .env
+    networks:
+      - default
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app
+
+  postgres:
+    image: postgres:11-alpine
+    ports:
+      - "${DOCKER_POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db:/var/lib/postgresql
+    networks:
+      - default
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "${DOCKER_REDIS_PORT:-9379}:6379"
+    networks:
+      default:
+
+networks:
+  default:
+    name: file_server
