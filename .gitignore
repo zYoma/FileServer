@@ -393,4 +393,5 @@ $RECYCLE.BIN/
 
 static/
 tmp/
+.idea
 # End of https://www.toptal.com/developers/gitignore/api/vim,linux,macos,pycharm,visualstudiocode,windows,python
