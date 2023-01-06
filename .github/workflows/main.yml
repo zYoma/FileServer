@@ -55,8 +55,8 @@ jobs:
         python -m poetry run python -m mypy src/
     - name: Test with pytest
       env:
-        RW_DSN: postgresql+asyncpg://postgres@postgres:5432/postgres
-        TEST_DSN: postgresql+asyncpg://postgres@postgres:5432/postgres
+        RW_DSN: postgresql+asyncpg://postgres@127.0.0.1:5432/postgres
+        TEST_DSN: postgresql+asyncpg://postgres@127.0.0.1:5432/postgres
         SECRET_KEY: 12345
       run: |
         python -m poetry run python -m pytest
