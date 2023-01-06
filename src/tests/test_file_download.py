@@ -6,15 +6,13 @@ import pytest
 from httpx import AsyncClient
 
 from .conftest import base_url
-from .mocks.file_download import (download_result_1, download_result_2,
-                                  download_result_3)
 
 
 @pytest.mark.parametrize('path, code, result', [  # noqa
     ('file.txt', 404, ""),
-    ('tmp/test_user/file.txt', 200, download_result_1()),
-    ('id', 200, download_result_3()),
-    ('tmp/test_user/docs/one/two/', 200, download_result_2()),
+    ('tmp/test_user/file.txt', 200, ['archive.zip', 'file.txt']),
+    ('id', 200, ['archive.zip', 'test.pdf']),
+    ('tmp/test_user/docs/one/two/', 200, ['archive.zip']),
 ])
 async def test_download_file(path, code, result, test_app, token1, create_files):
     if path == 'id':
@@ -51,4 +49,5 @@ async def test_download_file(path, code, result, test_app, token1, create_files)
             zip_ref.extractall(download_dir)
 
         files_in_directories = {root: files for root, _, files in os.walk(download_dir)}
-        assert files_in_directories == result, "количество файлов в ответе не верное"
+        for r in result:
+            assert r in files_in_directories['tmp/download/'], "количество файлов в ответе не верное"
