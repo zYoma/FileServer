@@ -253,6 +253,8 @@ make test   - запустить автотесты
 make makemigrations args=name - создать миграции
 make migrate  - запустить alembic upgrade head (все миграции)
 make migrate_downgrade - запустить alembic downgrade -1 (откатить на 1 миграцию назад)
+make flake8 - запуск линтеров (flake8)
+make mypy - запуск линтеров (mypy)
 
 ```
 

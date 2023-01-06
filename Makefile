@@ -27,4 +27,9 @@ test:
 
 shell:
 	${COMMAND} 'bash'
-	
+
+flake8:
+	${COMMAND} 'cd /app && flake8'
+
+mypy:
+	${COMMAND} 'cd /app && mypy .'
