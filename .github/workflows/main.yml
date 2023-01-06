@@ -66,6 +66,4 @@ jobs:
         SECRET_KEY: 12345
       run: |
         cd src
-        pwd
-        ls -la
         python -m poetry run python -m pytest
