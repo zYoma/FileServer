@@ -65,4 +65,7 @@ jobs:
         REDIS_DSN: redis://127.0.0.1:6379/1
         SECRET_KEY: 12345
       run: |
-        python -m poetry run cd src && python -m pytest
+        cd src
+        pwd
+        ls -la
+        python -m poetry run python -m pytest
