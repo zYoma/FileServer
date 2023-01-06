@@ -29,7 +29,8 @@ jobs:
     - name: Lint with flake8 and mypy
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        python -m poetry run python -m flake8
+        python -m poetry run pwd
+        python -m poetry run python -m flake8 src/
         python -m poetry run python -m mypy src/
     - name: Test with pytest
       run: |
