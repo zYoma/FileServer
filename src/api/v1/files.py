@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Depends, UploadFile, status
 from fastapi.responses import StreamingResponse
 
@@ -7,7 +9,7 @@ from crud.file import FileCrud
 from crud.revision import RevisionCrud
 from db.models.file import FileOrderBy
 from depends.auth import get_current_user
-from schemas.file import File, SearchResult
+from schemas.file import File, SearchResult, ViewFile
 from schemas.revision import RevisionResponse
 from schemas.user import User
 from services.file import DownloadFileManager, FileManager
@@ -122,5 +124,24 @@ async def revision_files(
     @timed_cache(cache_key=cache_key, time=5 * 60)
     async def cached(*args, **kwargs):
         return await revision_crud.get_revision(path=path, user_id=user.id, limit=limit)
+
+    return await cached()  # type: ignore
+
+
+@router.get(
+    "/view/{file_id}",
+    response_model=ViewFile,
+    summary="Просмотр содержимого файла",
+)
+async def file_view(
+    file_id: uuid.UUID,
+    user: User = Depends(get_current_user),
+) -> ViewFile:
+    cache_key = all_keys.file_view.substitute(user_id=user.id, file_id=file_id)
+
+    @timed_cache(cache_key=cache_key, time=5 * 60)
+    async def cached(*args, **kwargs):
+        manager = DownloadFileManager(user)
+        return await manager.get_file_content(file_id)
 
     return await cached()  # type: ignore

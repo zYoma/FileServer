@@ -23,3 +23,7 @@ class UploadFileBody(BaseModel):
 
 class SearchResult(BaseModel):
     matches: list[File]
+
+
+class ViewFile(IdSchema):
+    content: str

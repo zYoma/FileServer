@@ -18,9 +18,9 @@ from crud.directory import DirectoryCrud
 from crud.file import FileCrud
 from crud.revision import RevisionCrud
 from schemas.directory import DirectoryCreate
-from schemas.file import File, FileCreate
+from schemas.file import File, FileCreate, ViewFile
 from schemas.user import User
-from utils.exc import LargeFileError, NotFoundError
+from utils.exc import LargeFileError, NotFoundError, WrongFileFormatError
 from utils.functools import is_valid_uuid
 
 logger = logging.getLogger(__name__)
@@ -152,6 +152,18 @@ class DownloadFileManager:
 
         return self._zip_files(file_list)
 
+    async def get_file_content(self, id: uuid.UUID) -> ViewFile:
+        # получаем файл из БД
+        if file := await self.file_crud.get_one(id=id, user_id=self.user.id):
+            try:
+                # пытаемся прочитать файл с диска
+                content = await self._get_content(file)  # type: ignore
+            except UnicodeDecodeError:
+                # если это бинарный файл, просмотр недоступен
+                raise WrongFileFormatError
+            return ViewFile(id=file.id, content=content)  # type: ignore
+        raise NotFoundError
+
     async def _get_file_list_for_directory(self, name: str, parent_id: uuid.UUID) -> list[str]:
         """Метод собирает абсолютные пути до всех файлов начиная с переданной директории."""
         dirs_list = await self._get_path_to_dir(name, parent_id)
@@ -201,6 +213,12 @@ class DownloadFileManager:
             return await self._get_file_list_for_directory(directory.name, directory.parent_id)  # type: ignore
 
         raise NotFoundError
+
+    @staticmethod
+    async def _get_content(file: File) -> str:
+        path = file.path
+        async with aiofiles.open(path, 'r') as f:
+            return await f.read()
 
     @staticmethod
     def _zip_files(file_list: list[str] | File) -> StreamingResponse:

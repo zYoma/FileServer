@@ -143,3 +143,9 @@ class LargeFileError(BaseServiceException):
     status_code = status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
     code = ErrorCodes.VALIDATION_ERROR
     message = f'Размер файла не должен превышать {settings.MAX_FILE_SIZE_KB} kb'
+
+
+class WrongFileFormatError(BaseServiceException):
+    status_code = 400
+    code = ErrorCodes.VALIDATION_ERROR
+    message = 'Файл не является текстовым, предварительный просмотр не доступен.'

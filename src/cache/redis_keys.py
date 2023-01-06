@@ -8,6 +8,7 @@ class CommonConfig(BaseSettings):
     get_current_user: Template = Template("get_current_user_$token")
     search_files: Template = Template("search_files_$user_id$path$extension$order_by$limit")
     revision_files: Template = Template("revision_files_$user_id$path$limit")
+    file_view: Template = Template("file_view_$user_id$file_id")
 
 
 all_keys = CommonConfig()
