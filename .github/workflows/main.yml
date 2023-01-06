@@ -36,6 +36,11 @@ jobs:
           POSTGRES_PASSWORD: ${{ matrix.database-password }}
         ports:
           - 5432:5432
+      
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
 
     steps:
     - uses: actions/checkout@v3
