@@ -51,13 +51,12 @@ jobs:
         python -m poetry install
     - name: Lint with flake8 and mypy
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        python -m poetry run pwd
         python -m poetry run python -m flake8 src/
         python -m poetry run python -m mypy src/
     - name: Test with pytest
       env:
         RW_DSN: postgresql+asyncpg://postgres@postgres:5432/postgres
         TEST_DSN: postgresql+asyncpg://postgres@postgres:5432/postgres
+        SECRET_KEY: 12345
       run: |
         python -m poetry run python -m pytest
